@@ -140,6 +140,8 @@ def main():
             """
             
             selector = str(query.selector)
+            # Wyciągnij sam klucz (bez parametrów po '?')
+            key_expr = selector.split('?')[0]
             print(f"\n📨 Otrzymano zapytanie: {selector}")
             
             try:
@@ -147,41 +149,46 @@ def main():
                 # PARSOWANIE ZAPYTANIA I PRZYGOTOWANIE ODPOWIEDZI
                 # ============================================================
                 
-                if "pid_gains" in selector:
+                if "pid_gains" in key_expr:
                     # Zapytanie o PID gains
                     response = CONFIG["pid_gains"]
+                    response_key = "robot/g1/config/pid_gains"
                     print(f"   📤 Odpowiadam: PID gains")
                     
-                elif "joint_limits" in selector:
+                elif "joint_limits" in key_expr:
                     # Zapytanie o limity stawów
                     response = CONFIG["joint_limits"]
+                    response_key = "robot/g1/config/joint_limits"
                     print(f"   📤 Odpowiadam: Joint limits")
                     
-                elif "max_velocity" in selector:
+                elif "max_velocity" in key_expr:
                     # Zapytanie o maksymalne prędkości
                     response = CONFIG["max_velocity"]
+                    response_key = "robot/g1/config/max_velocity"
                     print(f"   📤 Odpowiadam: Max velocity")
                     
-                elif "safety" in selector:
+                elif "safety" in key_expr:
                     # Zapytanie o parametry bezpieczeństwa
                     response = CONFIG["safety"]
+                    response_key = "robot/g1/config/safety"
                     print(f"   📤 Odpowiadam: Safety parameters")
                     
-                elif selector.endswith("config/**") or selector.endswith("config"):
+                elif key_expr.endswith("config/**") or key_expr.endswith("config"):
                     # Zapytanie o całą konfigurację
                     response = CONFIG
+                    response_key = "robot/g1/config"
                     print(f"   📤 Odpowiadam: Pełna konfiguracja")
                     
                 else:
                     # Nieznane zapytanie
                     error_msg = {
                         "error": "Unknown configuration key",
-                        "requested": selector,
+                        "requested": key_expr,
                         "available": list(CONFIG.keys())
                     }
                     print(f"   ❌ Nieznany klucz konfiguracji")
-                    # Użyj prostego klucza (nie selector z parametrami) dla błędu
-                    query.reply_err("robot/g1/config", json.dumps(error_msg, indent=2))
+                    # Użyj klucza zapytania dla odpowiedzi błędu
+                    query.reply_err(key_expr, json.dumps(error_msg, indent=2))
                     return
                 
                 # ============================================================
@@ -190,7 +197,8 @@ def main():
                 # Formatowanie JSON z wcięciami dla czytelności
                 response_json = json.dumps(response, indent=2)
                 
-                query.reply(selector, response_json)
+                # Użyj konkretnego klucza odpowiedzi (nie selector z parametrami)
+                query.reply(response_key, response_json)
                 
                 # Wyświetl rozmiar odpowiedzi
                 print(f"   ℹ️  Rozmiar odpowiedzi: {len(response_json)} bajtów")
@@ -202,7 +210,7 @@ def main():
                     "error": str(e),
                     "type": type(e).__name__
                 })
-                query.reply_err(selector, error_payload)
+                query.reply_err(key_expr, error_payload)
         
         # ========================================================================
         # KROK 3: DEKLARACJA QUERYABLE
