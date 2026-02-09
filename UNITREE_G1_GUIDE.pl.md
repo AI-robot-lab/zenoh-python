@@ -649,19 +649,13 @@ def main():
                     print(f"   📤 Odpowiadam: Pełna konfiguracja")
                 
                 # Wysłanie odpowiedzi
-                # reply() wysyła Sample z danymi
-                query.reply(
-                    zenoh.Sample(
-                        selector,
-                        json.dumps(response, indent=2)
-                    )
-                )
+                query.reply(selector, json.dumps(response, indent=2))
                 
             except Exception as e:
                 print(f"   ❌ Błąd: {e}")
                 # Możemy wysłać błąd jako odpowiedź
                 error_payload = json.dumps({"error": str(e)})
-                query.reply_err(zenoh.Sample(selector, error_payload))
+                query.reply_err(selector, error_payload)
         
         # ============================================
         # Deklaracja Queryable

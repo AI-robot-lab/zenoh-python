@@ -180,9 +180,7 @@ def main():
                         "available": list(CONFIG.keys())
                     }
                     print(f"   ❌ Nieznany klucz konfiguracji")
-                    query.reply_err(
-                        zenoh.Sample(selector, json.dumps(error_msg, indent=2))
-                    )
+                    query.reply_err(selector, json.dumps(error_msg, indent=2))
                     return
                 
                 # ============================================================
@@ -191,9 +189,7 @@ def main():
                 # Formatowanie JSON z wcięciami dla czytelności
                 response_json = json.dumps(response, indent=2)
                 
-                query.reply(
-                    zenoh.Sample(selector, response_json)
-                )
+                query.reply(selector, response_json)
                 
                 # Wyświetl rozmiar odpowiedzi
                 print(f"   ℹ️  Rozmiar odpowiedzi: {len(response_json)} bajtów")
@@ -205,7 +201,7 @@ def main():
                     "error": str(e),
                     "type": type(e).__name__
                 })
-                query.reply_err(zenoh.Sample(selector, error_payload))
+                query.reply_err(selector, error_payload)
         
         # ========================================================================
         # KROK 3: DEKLARACJA QUERYABLE
