@@ -899,7 +899,7 @@ pub_telemetry = session.declare_publisher(
 
 ### 3. Error handling
 
-Zawsze obs obsługuj błędy w callback'ach:
+Zawsze obsługuj błędy w callback'ach:
 
 ```python
 def callback(sample: zenoh.Sample):
