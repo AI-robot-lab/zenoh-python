@@ -180,7 +180,8 @@ def main():
                         "available": list(CONFIG.keys())
                     }
                     print(f"   ❌ Nieznany klucz konfiguracji")
-                    query.reply_err(selector, json.dumps(error_msg, indent=2))
+                    # Użyj prostego klucza (nie selector z parametrami) dla błędu
+                    query.reply_err("robot/g1/config", json.dumps(error_msg, indent=2))
                     return
                 
                 # ============================================================
